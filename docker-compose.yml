@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+    web:
+        build: ./backend
+        container_name: stocktracker_web
+        command: gunicorn stocktracker.wsgi:application --bind 0.0.0.0:8000
+        ports:
+            - '8000:8000'
+        environment:
+            DJANGO_SETTINGS_MODULE: stocktracker.settings.production
+            DB_HOST: ${DB_HOST} # RDS host
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DB_PORT: ${DB_PORT:-5432}
+        depends_on:
+            - frontend
+
+    frontend:
+        build: ./frontend
+        container_name: stocktracker_frontend
+        command: npm run preview # SvelteKit production server
+        ports:
+            - '3000:3000'
+        environment:
+            VITE_API_URL: http://localhost:8000

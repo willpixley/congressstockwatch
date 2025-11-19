@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+    db:
+        image: postgres:15
+        container_name: stocktracker_db
+        environment:
+            POSTGRES_DB: stocktracker
+            POSTGRES_USER: stocktracker_user
+            POSTGRES_PASSWORD: strongpassword
+        ports:
+            - '5432:5432'
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        networks:
+            - default
+
+    web:
+        environment:
+            DB_HOST: db
+            DB_NAME: stocktracker
+            DB_USER: stocktracker_user
+            DB_PASSWORD: strongpassword
+            DB_PORT: 5432
+
+volumes:
+    pgdata:
